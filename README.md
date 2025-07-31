@@ -2,7 +2,7 @@
 
 Este proyecto implementa un sistema de autenticación web seguro con protección contra ataques de SQL Injection, encriptación de contraseñas y límite de intentos de login.
 
-## 🚀 Características
+## Características
 
 - **Autenticación Segura**: Sistema de login con NextAuth.js
 - **Protección SQL Injection**: Uso de Prisma ORM con prepared statements
@@ -12,12 +12,12 @@ Este proyecto implementa un sistema de autenticación web seguro con protección
 - **TypeScript**: Tipado completo para mayor seguridad
 - **Tailwind CSS**: Interfaz moderna y responsiva
 
-## 📋 Requisitos
+## Requisitos
 
 - Docker y Docker Compose
 - Node.js 18+ (para desarrollo local)
 
-## 🛠️ Instalación
+## Instalación
 
 ### 1. Clonar el repositorio
 ```bash
@@ -50,7 +50,7 @@ docker-compose exec app npm run db:seed
 ### 4. Acceder a la aplicación
 Abre tu navegador en: http://localhost:3000
 
-## 👥 Usuarios de Prueba
+## Usuarios de Prueba
 
 El sistema incluye usuarios predefinidos para pruebas:
 
@@ -60,7 +60,7 @@ El sistema incluye usuarios predefinidos para pruebas:
 | usuario@test.com | usuario123 | Usuario Test |
 | maria@test.com | maria123 | María García |
 
-## 🔒 Medidas de Seguridad Implementadas
+## Medidas de Seguridad Implementadas
 
 ### 1. Protección contra SQL Injection
 - **Prisma ORM**: Uso de prepared statements automáticos
@@ -82,7 +82,7 @@ El sistema incluye usuarios predefinidos para pruebas:
 - **Protección de rutas**: Middleware de autenticación
 - **Logout seguro**: Invalidación de sesiones
 
-## 🧪 Pruebas de SQL Injection
+## Pruebas de SQL Injection
 
 ### Intentos de Ataque Documentados
 
@@ -114,7 +114,7 @@ Todas las consultas a la base de datos se realizan a través de Prisma, que auto
 - Utiliza prepared statements
 - Previene inyecciones SQL
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 ├── app/
@@ -134,7 +134,7 @@ Todas las consultas a la base de datos se realizan a través de Prisma, que auto
 └── package.json                         # Dependencias
 ```
 
-## 🚀 Comandos Útiles
+## Comandos Útiles
 
 ```bash
 # Desarrollo local
@@ -152,7 +152,7 @@ docker-compose down   # Detener servicios
 docker-compose logs   # Ver logs
 ```
 
-## 🔧 Configuración de Desarrollo
+## Configuración de Desarrollo
 
 ### Instalación Local (sin Docker)
 ```bash
@@ -170,14 +170,14 @@ npm run db:seed
 npm run dev
 ```
 
-## 📝 Entregables
+## Entregables
 
-- ✅ Código fuente del login implementado
-- ✅ Base de datos con usuarios registrados
-- ✅ Pruebas de SQL Injection documentadas
-- ✅ Explicación de medidas de seguridad implementadas
+- Código fuente del login implementado
+- Base de datos con usuarios registrados
+- Pruebas de SQL Injection documentadas
+- Explicación de medidas de seguridad implementadas
 
-## 🛡️ Seguridad Adicional
+## Seguridad Adicional
 
 ### Recomendaciones para Producción
 
@@ -194,7 +194,7 @@ npm run dev
 - Bloqueos de cuenta
 - Errores de base de datos
 
-## 📞 Soporte
+## Soporte
 
 Para dudas o problemas, revisa:
 1. Los logs de Docker: `docker-compose logs`

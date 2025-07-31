@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: login_db
+    environment:
+      POSTGRES_DB: login_secure
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  app:
+    build: .
+    container_name: login_app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:password123@postgres:5432/login_secure
+      NEXTAUTH_SECRET: 0a141fbc554c986a1622627977e1d423e5680fe51dd60f6c855f38c02c1b3cd56b65c4702a379762fb9313e166a32fdca0079a52d5ba77d9840912003f0e691f
+      NEXTAUTH_URL: http://localhost:3000
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge 

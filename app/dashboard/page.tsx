@@ -3,6 +3,7 @@
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import Link from 'next/link'
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
@@ -40,6 +41,12 @@ export default function DashboardPage() {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
+              <Link
+                href="/products"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              >
+                Gestión de Productos
+              </Link>
               <span className="text-sm text-gray-700">
                 Bienvenido, {session.user.name || session.user.email}
               </span>
@@ -80,6 +87,35 @@ export default function DashboardPage() {
                 <p className="mt-2 text-sm text-gray-500">
                   Has accedido exitosamente al sistema de autenticación seguro.
                 </p>
+              </div>
+
+              <div className="mt-8 border-t border-gray-200 pt-8">
+                <h4 className="text-lg font-medium text-gray-900 mb-4">
+                  Funcionalidades Disponibles
+                </h4>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <Link
+                    href="/products"
+                    className="bg-blue-50 border border-blue-200 rounded-lg p-4 hover:bg-blue-100 transition-colors"
+                  >
+                    <h5 className="font-medium text-blue-900">Gestión de Productos</h5>
+                    <p className="text-sm text-blue-700 mt-1">
+                      Crear, editar, eliminar y listar productos
+                    </p>
+                  </Link>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h5 className="font-medium text-green-900">Autenticación Segura</h5>
+                    <p className="text-sm text-green-700 mt-1">
+                      Sistema de login con medidas de seguridad
+                    </p>
+                  </div>
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <h5 className="font-medium text-yellow-900">Base de Datos</h5>
+                    <p className="text-sm text-yellow-700 mt-1">
+                      PostgreSQL con Prisma ORM
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <div className="mt-8 border-t border-gray-200 pt-8">

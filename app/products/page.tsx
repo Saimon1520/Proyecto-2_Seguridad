@@ -10,7 +10,7 @@ interface Product {
   name: string
   description: string | null
   quantity: number
-  price: number
+  price: number | { toString(): string }
   createdAt: string
   updatedAt: string
 }
@@ -94,7 +94,7 @@ export default function ProductsPage() {
       name: product.name,
       description: product.description || '',
       quantity: product.quantity,
-      price: product.price
+      price: Number(product.price)
     })
     setShowCreateForm(true)
   }
@@ -279,7 +279,7 @@ export default function ProductsPage() {
                     {product.quantity}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${product.price.toFixed(2)}
+                    ${Number(product.price).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button

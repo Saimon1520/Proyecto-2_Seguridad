@@ -90,9 +90,14 @@ export default function DashboardPage() {
               </div>
 
               <div className="mt-8 border-t border-gray-200 pt-8">
-                <h4 className="text-lg font-medium text-gray-900 mb-4">
-                  Funcionalidades Disponibles
-                </h4>
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-medium text-gray-900">
+                    Funcionalidades Disponibles
+                  </h4>
+                  <div className="text-sm text-gray-500">
+                    Sistema de Login Seguro • Dashboard
+                  </div>
+                </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <Link
                     href="/products"

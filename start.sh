@@ -1,20 +1,19 @@
 #!/bin/sh
 
-echo "🔄 Esperando a que PostgreSQL esté listo..."
+echo "Esperando a que PostgreSQL este listo..."
 
-# Esperar a que PostgreSQL esté disponible
 until npx prisma db push --accept-data-loss; do
-  echo "⏳ PostgreSQL no está listo aún, esperando..."
+  echo "PostgreSQL no esta listo aun, esperando..."
   sleep 2
 done
 
-echo "✅ Base de datos conectada"
+echo "Base de datos conectada"
 
-echo "🔄 Ejecutando migraciones..."
+echo "Ejecutando migraciones..."
 npx prisma migrate deploy
 
-echo "🔄 Poblando base de datos con datos de prueba..."
+echo "Poblando base de datos con datos de prueba..."
 npm run db:seed
 
-echo "🚀 Iniciando aplicación..."
-npm run dev 
+echo "Iniciando aplicacion..."
+npm run dev

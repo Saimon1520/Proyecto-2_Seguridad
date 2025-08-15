@@ -35,10 +35,13 @@ echo.
 echo URL de la aplicación: http://localhost:3000
 echo.
 echo Usuarios de prueba:
-echo - admin@test.com / admin123
-echo - usuario@test.com / usuario123
-echo - maria@test.com / maria123
+echo - admin@test.com / admin123 (SuperAdmin)
+echo - auditor@test.com / auditor123 (Auditor)
+echo - registrador@test.com / registrador123 (Registrador)
+echo - usuario@test.com / usuario123 (Registrador)
+echo - maria@test.com / maria123 (Auditor)
 echo.
+echo Para configurar la base de datos: setup-db.bat
 echo Para ver los logs: docker-compose logs -f
 echo Para detener: docker-compose down
 echo.

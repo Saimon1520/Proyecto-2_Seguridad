@@ -25,9 +25,16 @@ echo    ¡Base de datos configurada!
 echo ========================================
 echo.
 echo Usuarios creados:
-echo - admin@test.com / admin123
-echo - usuario@test.com / usuario123
-echo - maria@test.com / maria123
+echo - admin@test.com / admin123 (SuperAdmin)
+echo - auditor@test.com / auditor123 (Auditor)
+echo - registrador@test.com / registrador123 (Registrador)
+echo - usuario@test.com / usuario123 (Registrador)
+echo - maria@test.com / maria123 (Auditor)
+echo.
+echo Roles y permisos configurados:
+echo - SuperAdmin: Todos los permisos
+echo - Auditor: Solo ver reportes
+echo - Registrador: Gestión de productos + ver reportes
 echo.
 echo Puedes acceder a la aplicación en: http://localhost:3000
 echo.

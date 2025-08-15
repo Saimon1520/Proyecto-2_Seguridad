@@ -25,11 +25,34 @@ docker-compose exec app npm run db:seed
 
 ## 👥 Usuarios de Prueba
 
-| Email | Contraseña | Nombre |
-|-------|------------|--------|
-| admin@test.com | admin123 | Administrador |
-| usuario@test.com | usuario123 | Usuario Test |
-| maria@test.com | maria123 | María García |
+| Email | Contraseña | Nombre | Username | Rol | Permisos |
+|-------|------------|--------|----------|-----|----------|
+| admin@test.com | admin123 | Administrador | admin | SuperAdmin | Todos los permisos |
+| auditor@test.com | auditor123 | Auditor Test | auditor | Auditor | Solo ver reportes |
+| registrador@test.com | registrador123 | Registrador Test | registrador | Registrador | Crear, editar, borrar productos y ver reportes |
+| usuario@test.com | usuario123 | Usuario Test | usuario | Registrador | Crear, editar, borrar productos y ver reportes |
+| maria@test.com | maria123 | María García | maria | Auditor | Solo ver reportes |
+
+## 🎯 Funcionalidades por Rol
+
+### SuperAdmin
+- ✅ Crear, editar y borrar usuarios
+- ✅ Crear, editar y borrar roles
+- ✅ Asignar permisos a roles
+- ✅ Asignar roles a usuarios
+- ✅ Ver reportes (usuarios y productos)
+- ✅ Gestión completa de productos
+
+### Auditor
+- ❌ No puede crear, editar o borrar usuarios
+- ❌ No puede gestionar roles
+- ✅ Solo puede ver listas de usuarios y productos
+
+### Registrador
+- ❌ No puede gestionar usuarios
+- ❌ No puede gestionar roles
+- ✅ Puede crear, editar y borrar productos
+- ✅ Puede ver lista de usuarios
 
 ## 🧪 Pruebas de Seguridad
 
@@ -49,6 +72,11 @@ Intentar estos payloads en el campo email:
 ### Pruebas de Acceso
 1. **Sin login**: Ir a `/dashboard` → Redirigido a `/login`
 2. **Con login**: Acceso permitido → Mensaje "Usuario logueado satisfactoriamente"
+
+### Pruebas de Permisos
+1. **Auditor**: Solo puede ver listas, no puede crear/editar/borrar
+2. **Registrador**: Puede gestionar productos pero no usuarios
+3. **SuperAdmin**: Acceso completo a todas las funcionalidades
 
 ## 🔧 Comandos Útiles
 
@@ -74,8 +102,9 @@ docker-compose ps
 - `docker-compose.yml` - Configuración de servicios
 - `prisma/schema.prisma` - Esquema de base de datos
 - `app/api/auth/[...nextauth]/route.ts` - Configuración de autenticación
-- `app/login/page.tsx` - Página de login
-- `app/dashboard/page.tsx` - Página de bienvenida
+- `app/api/users/route.ts` - API de gestión de usuarios
+- `app/users/page.tsx` - Página de gestión de usuarios
+- `app/dashboard/page.tsx` - Dashboard principal
 
 ## 🛡️ Medidas de Seguridad
 

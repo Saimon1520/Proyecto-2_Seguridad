@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -23,6 +23,17 @@ const handler = NextAuth({
           const user = await prisma.user.findUnique({
             where: {
               email: credentials.email
+            },
+            include: {
+              role: {
+                include: {
+                  permissions: {
+                    include: {
+                      permission: true
+                    }
+                  }
+                }
+              }
             }
           })
 
@@ -55,24 +66,30 @@ const handler = NextAuth({
             throw new Error('Contraseña incorrecta')
           }
 
-          // Resetear intentos de login si la autenticación es exitosa
-          if (user.loginAttempts > 0) {
-            await prisma.user.update({
-              where: { id: user.id },
-              data: {
-                loginAttempts: 0,
-                lockedUntil: null
-              }
-            })
-          }
+          // Resetear intentos de login y actualizar último login si la autenticación es exitosa
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              loginAttempts: 0,
+              lockedUntil: null,
+              lastLoginAt: new Date()
+            }
+          })
 
+          // Retornar usuario con información del rol y permisos
           return {
             id: user.id,
             email: user.email,
-            name: user.name || ''
+            name: user.name,
+            username: user.username,
+            role: user.role ? {
+              id: user.role.id,
+              name: user.role.name,
+              permissions: user.role.permissions.map(rp => rp.permission.name)
+            } : null
           }
         } catch (error) {
-          console.error('Error de autenticación:', error)
+          console.error('Error en autenticación:', error)
           throw error
         }
       }
@@ -88,6 +105,8 @@ const handler = NextAuth({
         token.id = user.id
         token.email = user.email
         token.name = user.name
+        token.username = user.username
+        token.role = user.role
       }
       return token
     },
@@ -96,6 +115,8 @@ const handler = NextAuth({
         session.user.id = token.id as string
         session.user.email = token.email as string
         session.user.name = token.name as string
+        session.user.username = token.username as string
+        session.user.role = token.role as any
       }
       return session
     }
@@ -105,6 +126,8 @@ const handler = NextAuth({
     error: '/login'
   },
   secret: process.env.NEXTAUTH_SECRET
-})
+}
+
+const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST } 

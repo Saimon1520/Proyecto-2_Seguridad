@@ -3,7 +3,14 @@ import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../auth/[...nextauth]/route'
+import { authOptions } from '@/app/lib/auth'
+import { 
+  sanitizeText, 
+  validateEmail, 
+  validateUsername, 
+  validateName,
+  escapeForLog 
+} from '@/app/utils/security'
 
 const prisma = new PrismaClient()
 
@@ -120,12 +127,24 @@ export async function POST(request: NextRequest) {
         // Validar datos de entrada
         const validatedData = createUserSchema.parse(body)
 
+        // Sanitizar y validar datos adicionales
+        const sanitizedEmail = validateEmail(validatedData.email)
+        const sanitizedUsername = validateUsername(validatedData.username)
+        const sanitizedName = validateName(validatedData.name)
+
+        if (!sanitizedEmail || !sanitizedUsername || !sanitizedName) {
+            return NextResponse.json(
+                { error: 'Datos de entrada inválidos o maliciosos' },
+                { status: 400 }
+            )
+        }
+
         // Verificar si el usuario ya existe por email o username
         const existingUser = await prisma.user.findFirst({
             where: {
                 OR: [
-                    { email: validatedData.email },
-                    { username: validatedData.username }
+                    { email: sanitizedEmail },
+                    { username: sanitizedUsername }
                 ]
             }
         })
@@ -143,10 +162,10 @@ export async function POST(request: NextRequest) {
         // Crear usuario
         const user = await prisma.user.create({
             data: {
-                email: validatedData.email,
+                email: sanitizedEmail,
                 password: hashedPassword,
-                name: validatedData.name,
-                username: validatedData.username,
+                name: sanitizedName,
+                username: sanitizedUsername,
                 roleId: validatedData.roleId || null,
                 loginAttempts: 0
             },
@@ -170,7 +189,12 @@ export async function POST(request: NextRequest) {
         })
 
     } catch (error) {
-        console.error('Error al crear usuario:', error)
+        // Log seguro sin exponer información sensible
+        console.error('Error al crear usuario:', {
+            error: error instanceof Error ? escapeForLog(error.message) : 'Error desconocido',
+            timestamp: new Date().toISOString(),
+            action: 'create_user'
+        })
 
         if (error instanceof z.ZodError) {
             return NextResponse.json(

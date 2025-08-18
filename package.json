@@ -17,6 +17,7 @@
     "autoprefixer": "^10.4.16",
     "bcryptjs": "^2.4.3",
     "dotenv": "^17.2.0",
+    "isomorphic-dompurify": "^2.26.0",
     "jsonwebtoken": "^9.0.2",
     "next": "14.0.4",
     "next-auth": "^4.24.5",

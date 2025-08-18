@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../auth/[...nextauth]/route'
+import { authOptions } from '@/app/lib/auth'
 import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
+import { 
+  sanitizeText, 
+  validateProductCode, 
+  validatePrice, 
+  validateQuantity,
+  escapeForLog 
+} from '@/app/utils/security'
 
 const prisma = new PrismaClient()
 
@@ -54,9 +61,23 @@ export async function POST(request: NextRequest) {
     // Validar datos de entrada
     const validatedData = productSchema.parse(body)
 
+    // Sanitizar y validar datos adicionales
+    const sanitizedCode = validateProductCode(validatedData.code)
+    const sanitizedName = sanitizeText(validatedData.name)
+    const sanitizedDescription = validatedData.description ? sanitizeText(validatedData.description) : null
+    const validatedQuantity = validateQuantity(validatedData.quantity)
+    const validatedPrice = validatePrice(validatedData.price)
+
+    if (!sanitizedCode || !sanitizedName || validatedQuantity === null || validatedPrice === null) {
+      return NextResponse.json(
+        { error: 'Datos de entrada inválidos o maliciosos' },
+        { status: 400 }
+      )
+    }
+
     // Verificar si el código ya existe
     const existingProduct = await prisma.product.findUnique({
-      where: { code: validatedData.code }
+      where: { code: sanitizedCode }
     })
 
     if (existingProduct) {
@@ -69,11 +90,11 @@ export async function POST(request: NextRequest) {
     // Crear el producto
     const product = await prisma.product.create({
       data: {
-        code: validatedData.code,
-        name: validatedData.name,
-        description: validatedData.description || null,
-        quantity: validatedData.quantity,
-        price: validatedData.price
+        code: sanitizedCode,
+        name: sanitizedName,
+        description: sanitizedDescription,
+        quantity: validatedQuantity,
+        price: validatedPrice
       }
     })
 
@@ -86,7 +107,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error('Error creating product:', error)
+    // Log seguro sin exponer información sensible
+    console.error('Error creating product:', {
+      error: error instanceof Error ? escapeForLog(error.message) : 'Error desconocido',
+      timestamp: new Date().toISOString(),
+      action: 'create_product'
+    })
+
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }

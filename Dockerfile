@@ -15,8 +15,11 @@ COPY . .
 # Generate Prisma client
 RUN npx prisma generate
 
-# Make start script executable
-RUN chmod +x start.sh
+# Build the application
+RUN npm run build
+
+# Make start script executable and verify it exists
+RUN ls -la start.sh && chmod +x start.sh
 
 EXPOSE 3000
 

@@ -1,13 +1,11 @@
-'use client'
+"use client"
 
-import { useSession, signOut } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { useSessionTimeout } from '../hooks/useSessionTimeout'
 import PermissionGuard from '../components/PermissionGuard'
-import UserDropdownMenu from '../components/UserDropdownMenu'
-import SecurityIndicator from '../components/SecurityIndicator'
 import SessionExpiryNotification from '../components/SessionExpiryNotification'
 
 export default function DashboardPage() {
@@ -38,38 +36,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">
-                Sistema de Login Seguro
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <PermissionGuard requiredPermissions={['crear', 'editar', 'borrar']}>
-                <Link
-                  href="/users"
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                >
-                  Gestión de Usuarios
-                </Link>
-              </PermissionGuard>
-              <PermissionGuard requiredPermissions={['crear', 'editar', 'borrar']}>
-                <Link
-                  href="/products"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                >
-                  Gestión de Productos
-                </Link>
-              </PermissionGuard>
-              {/* Reemplazado con UserDropdownMenu */}
-              <UserDropdownMenu />
-            </div>
-          </div>
-        </div>
-      </nav>
-
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="bg-white overflow-hidden shadow rounded-lg">
@@ -197,7 +163,7 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Solo mantener las notificaciones de expiración */}
+      {/* Notificaciones de expiración */}
       <SessionExpiryNotification />
     </div>
   )

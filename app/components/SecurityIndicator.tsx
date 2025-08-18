@@ -28,8 +28,17 @@ export default function SecurityIndicator() {
         const now = Math.floor(Date.now() / 1000)
         const lastRefresh = Math.floor(lastRefreshTime.getTime() / 1000)
         const timeSinceLastRefresh = now - lastRefresh
-        const nextRefreshIn = ENV_CONFIG.TOKEN_REFRESH_INTERVAL - timeSinceLastRefresh
-        setTimeUntilNextRefresh(Math.max(0, nextRefreshIn))
+        
+        // Si han pasado más de 60 segundos desde el último refresh, 
+        // significa que el token debería haberse refrescado
+        if (timeSinceLastRefresh >= ENV_CONFIG.TOKEN_REFRESH_INTERVAL) {
+          // El token debería haberse refrescado, mostrar 0s
+          setTimeUntilNextRefresh(0)
+        } else {
+          // Calcular tiempo restante hasta el próximo refresh
+          const nextRefreshIn = ENV_CONFIG.TOKEN_REFRESH_INTERVAL - timeSinceLastRefresh
+          setTimeUntilNextRefresh(Math.max(0, nextRefreshIn))
+        }
       }
     }, 1000)
 

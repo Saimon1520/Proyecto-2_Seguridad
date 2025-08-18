@@ -148,10 +148,21 @@ export function useSessionSecurity() {
       // IMPORTANTE: NO cerrar sesión después de 60 segundos
       // Solo refrescar el token cada 60 segundos
       refreshIntervalRef.current = setInterval(() => {
-        // Solo refrescar el token, NO cerrar sesión
+        // Verificar primero si la sesión sigue siendo válida
+        const now = Math.floor(Date.now() / 1000)
+        const sessionAge = now - sessionStart
+        
+        // Si la sesión expiró, cerrar sesión en lugar de refrescar
+        if (sessionAge >= ENV_CONFIG.SESSION_EXPIRY) {
+          console.log('⏰ Sesión expirada durante refresh, cerrando sesión...')
+          clearSessionData()
+          signOut({ redirect: true, callbackUrl: '/login' })
+          return
+        }
+        
+        // Solo refrescar el token si la sesión sigue siendo válida
         console.log('🔄 Refrescando token automáticamente...')
         
-        const now = Math.floor(Date.now() / 1000)
         const newLastRefresh = now
         
         // Actualizar tiempo del último refresh
@@ -162,7 +173,7 @@ export function useSessionSecurity() {
         const updatedData = {
           sessionStart,
           lastRefresh: newLastRefresh,
-          refreshCount: currentRefreshCount + 1,
+          refreshCount: refreshCount + 1,
           timeRemaining: timeRemaining
         }
         saveSessionData(updatedData)

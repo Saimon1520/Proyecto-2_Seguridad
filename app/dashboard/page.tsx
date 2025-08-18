@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 import { useSessionTimeout } from '../hooks/useSessionTimeout'
 import PermissionGuard from '../components/PermissionGuard'
-import SecurityStatusBar from '../components/SecurityStatusBar'
+import UserDropdownMenu from '../components/UserDropdownMenu'
 import SecurityIndicator from '../components/SecurityIndicator'
 import SessionExpiryNotification from '../components/SessionExpiryNotification'
 
@@ -63,19 +63,8 @@ export default function DashboardPage() {
                   Gestión de Productos
                 </Link>
               </PermissionGuard>
-              <div className="flex flex-col items-end">
-                <span className="text-sm text-gray-700">
-                  Bienvenido, {session.user.name || session.user.email}
-                </span>
-                {/* Reemplazado con SecurityStatusBar completo */}
-                <SecurityStatusBar />
-              </div>
-              <button
-                onClick={() => signOut({ callbackUrl: '/login' })}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Cerrar Sesión
-              </button>
+              {/* Reemplazado con UserDropdownMenu */}
+              <UserDropdownMenu />
             </div>
           </div>
         </div>
@@ -150,54 +139,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="mt-8 border-t border-gray-200 pt-8">
-                <h4 className="text-lg font-medium text-gray-900 mb-4">
-                  Información de la Sesión
-                </h4>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">ID de Usuario</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{session.user.id}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Username</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{session.user.username}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Email</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{session.user.email}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Nombre</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{session.user.name || 'No especificado'}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Rol</dt>
-                      <dd className="mt-1 text-sm text-gray-900">
-                        {session.user.role ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {session.user.role.name}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            Sin rol asignado
-                          </span>
-                        )}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Estado</dt>
-                      <dd className="mt-1 text-sm text-gray-900">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          Autenticado
-                        </span>
-                      </dd>
-                    </div>
-                  </dl>
-                </div>
-              </div>
-
+              {/* Sección de permisos del usuario */}
               {session.user.role && (
                 <div className="mt-8 border-t border-gray-200 pt-8">
                   <h4 className="text-lg font-medium text-gray-900 mb-4">
@@ -255,8 +197,7 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Componentes de seguridad */}
-      <SecurityIndicator />
+      {/* Solo mantener las notificaciones de expiración */}
       <SessionExpiryNotification />
     </div>
   )

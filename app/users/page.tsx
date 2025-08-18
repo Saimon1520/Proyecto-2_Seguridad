@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import { useSession, signOut } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -250,41 +250,6 @@ export default function UsersPage() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <nav className="bg-white shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex items-center">
-                            <h1 className="text-xl font-semibold text-gray-900">
-                                Sistema de Login Seguro
-                            </h1>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                            <Link
-                                href="/dashboard"
-                                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                            >
-                                Dashboard
-                            </Link>
-                            <Link
-                                href="/products"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                            >
-                                Gestión de Productos
-                            </Link>
-                            <span className="text-sm text-gray-700">
-                                Bienvenido, {session.user.name || session.user.email}
-                            </span>
-                            <button
-                                onClick={() => signOut({ callbackUrl: '/login' })}
-                                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                            >
-                                Cerrar Sesión
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
                     <div className="bg-white overflow-hidden shadow rounded-lg">

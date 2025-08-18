@@ -60,27 +60,65 @@ El sistema incluye usuarios predefinidos para pruebas:
 | usuario@test.com | usuario123 | Usuario Test |
 | maria@test.com | maria123 | María García |
 
-## Medidas de Seguridad Implementadas
+## Medidas de Seguridad Implementadas - UTN-07
 
-### 1. Protección contra SQL Injection
+### 1. Protección contra SQL Injection ✅
 - **Prisma ORM**: Uso de prepared statements automáticos
 - **Validación de entrada**: Validación con Zod
 - **Escape de caracteres**: Manejo seguro de datos de entrada
 
-### 2. Encriptación de Contraseñas
+### 2. Protección contra Cross-Site Scripting (XSS) ✅
+- **DOMPurify**: Sanitización de inputs HTML
+- **Validación estricta**: Tipos de datos y formatos
+- **Headers CSP**: Content Security Policy estricto
+- **Sanitización de texto**: Prevención de inyección de código
+
+### 3. Timeout de Sesión por Inactividad ✅
+- **1 minuto**: Sesión expira tras 1 minuto sin actividad
+- **Detección automática**: Mouse, teclado, scroll, focus
+- **Cierre automático**: Logout automático al expirar
+- **Reinicio de timer**: Con cualquier actividad del usuario
+
+### 4. Autenticación Obligatoria ✅
+- **Middleware de seguridad**: Protección de todas las rutas
+- **Redirección automática**: A login si no está autenticado
+- **Verificación de sesión**: En todas las APIs protegidas
+- **Sin acceso anónimo**: Todas las funcionalidades requieren login
+
+### 5. Control de Acceso Basado en Roles (RBAC) ✅
+- **Verificación de permisos**: Antes de mostrar funcionalidades
+- **Componente PermissionGuard**: Control granular de acceso
+- **Permisos específicos**: crear, editar, borrar, ver_reportes
+- **Ocultación de UI**: Funcionalidades no autorizadas
+
+### 6. Cookies Seguras ✅
+- **httpOnly**: No accesibles desde JavaScript
+- **Secure**: Solo en HTTPS en producción
+- **SameSite**: Protección contra CSRF
+- **Nombres seguros**: Prefijos __Secure y __Host
+
+### 7. Encriptación de Contraseñas ✅
 - **BCrypt**: Hashing con salt de 12 rondas
 - **Almacenamiento seguro**: Solo hashes en la base de datos
 - **Verificación segura**: Comparación de hashes
 
-### 3. Límite de Intentos de Login
+### 8. Límite de Intentos de Login ✅
 - **Contador de intentos**: Seguimiento de intentos fallidos
 - **Bloqueo temporal**: 15 minutos tras 5 intentos fallidos
 - **Reset automático**: Reseteo tras login exitoso
 
-### 4. Gestión de Sesiones
-- **JWT seguro**: Tokens con expiración
-- **Protección de rutas**: Middleware de autenticación
-- **Logout seguro**: Invalidación de sesiones
+### 9. Headers de Seguridad HTTP ✅
+- **X-Content-Type-Options**: Prevención de MIME sniffing
+- **X-Frame-Options**: Protección contra clickjacking
+- **X-XSS-Protection**: Protección XSS adicional
+- **Referrer-Policy**: Control de información de referencia
+- **Permissions-Policy**: Restricción de APIs del navegador
+
+### 10. Logging Seguro ✅
+- **Sin información sensible**: Logs sanitizados
+- **Escape de caracteres**: Prevención de inyección en logs
+- **Timestamps**: Auditoría y trazabilidad
+- **Acciones registradas**: Para análisis de seguridad
 
 ## Pruebas de SQL Injection
 

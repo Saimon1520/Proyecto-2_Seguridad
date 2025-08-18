@@ -1,13 +1,17 @@
-'use client'
+"use client"
 
-import { useSession, signOut } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import Link from 'next/link'
+import { useSessionTimeout } from '../hooks/useSessionTimeout'
+import PermissionGuard from '../components/PermissionGuard'
+import SessionExpiryNotification from '../components/SessionExpiryNotification'
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const { timeUntilTimeout } = useSessionTimeout()
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -32,41 +36,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">
-                Sistema de Login Seguro
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/users"
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Gestión de Usuarios
-              </Link>
-              <Link
-                href="/products"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Gestión de Productos
-              </Link>
-              <span className="text-sm text-gray-700">
-                Bienvenido, {session.user.name || session.user.email}
-              </span>
-              <button
-                onClick={() => signOut({ callbackUrl: '/login' })}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Cerrar Sesión
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="bg-white overflow-hidden shadow rounded-lg">
@@ -105,24 +74,28 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <Link
-                    href="/users"
-                    className="bg-purple-50 border border-purple-200 rounded-lg p-4 hover:bg-purple-100 transition-colors"
-                  >
-                    <h5 className="font-medium text-purple-900">Gestión de Usuarios</h5>
-                    <p className="text-sm text-purple-700 mt-1">
-                      Crear, editar, eliminar y listar usuarios
-                    </p>
-                  </Link>
-                  <Link
-                    href="/products"
-                    className="bg-blue-50 border border-blue-200 rounded-lg p-4 hover:bg-blue-100 transition-colors"
-                  >
-                    <h5 className="font-medium text-blue-900">Gestión de Productos</h5>
-                    <p className="text-sm text-blue-700 mt-1">
-                      Crear, editar, eliminar y listar productos
-                    </p>
-                  </Link>
+                  <PermissionGuard requiredPermissions={['crear', 'editar', 'borrar']}>
+                    <Link
+                      href="/users"
+                      className="bg-purple-50 border border-purple-200 rounded-lg p-4 hover:bg-purple-100 transition-colors"
+                    >
+                      <h5 className="font-medium text-purple-900">Gestión de Usuarios</h5>
+                      <p className="text-sm text-purple-700 mt-1">
+                        Crear, editar, eliminar y listar usuarios
+                      </p>
+                    </Link>
+                  </PermissionGuard>
+                  <PermissionGuard requiredPermissions={['crear', 'editar', 'borrar']}>
+                    <Link
+                      href="/products"
+                      className="bg-blue-50 border border-blue-200 rounded-lg p-4 hover:bg-blue-100 transition-colors"
+                    >
+                      <h5 className="font-medium text-blue-900">Gestión de Productos</h5>
+                      <p className="text-sm text-blue-700 mt-1">
+                        Crear, editar, eliminar y listar productos
+                      </p>
+                    </Link>
+                  </PermissionGuard>
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <h5 className="font-medium text-green-900">Autenticación Segura</h5>
                     <p className="text-sm text-green-700 mt-1">
@@ -132,54 +105,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="mt-8 border-t border-gray-200 pt-8">
-                <h4 className="text-lg font-medium text-gray-900 mb-4">
-                  Información de la Sesión
-                </h4>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">ID de Usuario</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{session.user.id}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Username</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{session.user.username}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Email</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{session.user.email}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Nombre</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{session.user.name || 'No especificado'}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Rol</dt>
-                      <dd className="mt-1 text-sm text-gray-900">
-                        {session.user.role ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {session.user.role.name}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            Sin rol asignado
-                          </span>
-                        )}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Estado</dt>
-                      <dd className="mt-1 text-sm text-gray-900">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          Autenticado
-                        </span>
-                      </dd>
-                    </div>
-                  </dl>
-                </div>
-              </div>
-
+              {/* Sección de permisos del usuario */}
               {session.user.role && (
                 <div className="mt-8 border-t border-gray-200 pt-8">
                   <h4 className="text-lg font-medium text-gray-900 mb-4">
@@ -236,6 +162,9 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
+
+      {/* Notificaciones de expiración */}
+      <SessionExpiryNotification />
     </div>
   )
 } 

@@ -6,6 +6,9 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 import { useSessionTimeout } from '../hooks/useSessionTimeout'
 import PermissionGuard from '../components/PermissionGuard'
+import SecurityStatusBar from '../components/SecurityStatusBar'
+import SecurityIndicator from '../components/SecurityIndicator'
+import SessionExpiryNotification from '../components/SessionExpiryNotification'
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
@@ -64,9 +67,8 @@ export default function DashboardPage() {
                 <span className="text-sm text-gray-700">
                   Bienvenido, {session.user.name || session.user.email}
                 </span>
-                <span className="text-xs text-orange-600">
-                  Sesión expira en: {Math.ceil(timeUntilTimeout / 1000)}s
-                </span>
+                {/* Reemplazado con SecurityStatusBar completo */}
+                <SecurityStatusBar />
               </div>
               <button
                 onClick={() => signOut({ callbackUrl: '/login' })}
@@ -252,6 +254,10 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
+
+      {/* Componentes de seguridad */}
+      <SecurityIndicator />
+      <SessionExpiryNotification />
     </div>
   )
 } 

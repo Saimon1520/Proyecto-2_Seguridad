@@ -30,13 +30,9 @@ export async function middleware(request: NextRequest) {
       )
     }
 
-    // Verificar timeout de sesión (1 minuto de inactividad)
-    if (token.iat && typeof token.iat === 'number' && Date.now() - token.iat * 1000 > 60 * 1000) {
-      return NextResponse.json(
-        { error: 'Sesión expirada por inactividad' },
-        { status: 401 }
-      )
-    }
+    // IMPORTANTE: NO verificar timeout de sesión aquí
+    // Solo verificar que el token sea válido
+    // El timeout de sesión se maneja en el frontend
   }
 
   // Para rutas de páginas, verificar autenticación
@@ -52,12 +48,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
 
-    // Verificar timeout de sesión (1 minuto de inactividad)
-    if (token.iat && typeof token.iat === 'number' && Date.now() - token.iat * 1000 > 60 * 1000) {
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('error', 'Sesión expirada por inactividad')
-      return NextResponse.redirect(loginUrl)
-    }
+    // IMPORTANTE: NO verificar timeout de sesión aquí
+    // Solo verificar que el token sea válido
+    // El timeout de sesión se maneja en el frontend
   }
 
   // Agregar headers de seguridad

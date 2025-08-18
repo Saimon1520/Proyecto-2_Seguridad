@@ -3,7 +3,7 @@
 import { useSessionSecurity } from '@/app/hooks/useSessionSecurity'
 import { useState, useEffect } from 'react'
 import { signOut } from 'next-auth/react'
-import { SECURITY_CONFIG } from '@/app/lib/security'
+import { ENV_CONFIG } from '@/app/lib/env'
 
 export default function SessionExpiryNotification() {
   const { timeRemaining, isAuthenticated } = useSessionSecurity()
@@ -15,12 +15,12 @@ export default function SessionExpiryNotification() {
     if (!isAuthenticated) return
 
     // Mostrar advertencia cuando quedan 5 minutos
-    if (timeRemaining <= SECURITY_CONFIG.WARNING_THRESHOLD && timeRemaining > SECURITY_CONFIG.CRITICAL_THRESHOLD) {
+    if (timeRemaining <= ENV_CONFIG.WARNING_THRESHOLD && timeRemaining > ENV_CONFIG.CRITICAL_THRESHOLD) {
       setShowWarning(true)
       setShowCritical(false)
     }
     // Mostrar advertencia crítica cuando quedan menos de 1 minuto
-    else if (timeRemaining <= SECURITY_CONFIG.CRITICAL_THRESHOLD) {
+    else if (timeRemaining <= ENV_CONFIG.CRITICAL_THRESHOLD) {
       setShowWarning(false)
       setShowCritical(true)
       setCountdown(timeRemaining)
@@ -68,8 +68,11 @@ export default function SessionExpiryNotification() {
                 ⏰ Sesión expirando pronto
               </h3>
               <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
-                <p>Tu sesión expirará en {Math.floor(timeRemaining / 60)} minutos.</p>
+                <p>Tu sesión expirará en <strong>{Math.floor(timeRemaining / 60)} minutos</strong>.</p>
                 <p className="mt-1">Se recomienda guardar tu trabajo.</p>
+                <div className="mt-2 p-2 bg-yellow-200 dark:bg-yellow-800/30 rounded text-xs">
+                  <p><strong>Recordatorio:</strong> Los tokens se refrescan cada {ENV_CONFIG.TOKEN_REFRESH_INTERVAL}s, pero la sesión completa expira en 1 hora.</p>
+                </div>
               </div>
               <div className="mt-3">
                 <button
@@ -98,8 +101,11 @@ export default function SessionExpiryNotification() {
                 ⚠️ Sesión expirando críticamente
               </h3>
               <div className="mt-2 text-sm text-red-700 dark:text-red-300">
-                <p>Tu sesión expirará en <span className="font-bold">{countdown}</span> segundos.</p>
+                <p>Tu sesión expirará en <span className="font-bold text-lg">{countdown}</span> segundos.</p>
                 <p className="mt-1">Serás redirigido al login automáticamente.</p>
+                <div className="mt-2 p-2 bg-red-200 dark:bg-red-800/30 rounded text-xs">
+                  <p><strong>Importante:</strong> Aunque los tokens se refrescan cada {ENV_CONFIG.TOKEN_REFRESH_INTERVAL}s, la sesión completa expira en 1 hora por seguridad.</p>
+                </div>
               </div>
               <div className="mt-3">
                 <button

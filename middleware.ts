@@ -29,10 +29,6 @@ export async function middleware(request: NextRequest) {
         { status: 401 }
       )
     }
-
-    // IMPORTANTE: NO verificar timeout de sesión aquí
-    // Solo verificar que el token sea válido
-    // El timeout de sesión se maneja en el frontend
   }
 
   // Para rutas de páginas, verificar autenticación
@@ -47,29 +43,9 @@ export async function middleware(request: NextRequest) {
       loginUrl.searchParams.set('error', 'Debe iniciar sesión para acceder a esta página')
       return NextResponse.redirect(loginUrl)
     }
-
-    // IMPORTANTE: NO verificar timeout de sesión aquí
-    // Solo verificar que el token sea válido
-    // El timeout de sesión se maneja en el frontend
   }
 
-  // Agregar headers de seguridad
-  const response = NextResponse.next()
-  
-  // Headers de seguridad
-  response.headers.set('X-Content-Type-Options', 'nosniff')
-  response.headers.set('X-Frame-Options', 'DENY')
-  response.headers.set('X-XSS-Protection', '1; mode=block')
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
-  
-  // CSP para prevenir XSS
-  response.headers.set(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
-  )
-
-  return response
+  return NextResponse.next()
 }
 
 export const config = {

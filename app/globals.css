@@ -3,53 +3,191 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --ios-primary: #007AFF;
+  --ios-secondary: #5856D6;
+  --ios-success: #34C759;
+  --ios-warning: #FF9500;
+  --ios-danger: #FF3B30;
+  --ios-background: #F2F2F7;
+  --ios-surface: #FFFFFF;
+  --ios-text-primary: #000000;
+  --ios-text-secondary: #8E8E93;
+  --ios-border: #C6C6C8;
+  --ios-shadow: rgba(0, 0, 0, 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--ios-background);
+  color: var(--ios-text-primary);
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom,
+  background: linear-gradient(
+      to bottom,
       transparent,
-      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* iOS-style components */
+.ios-card {
+  @apply bg-white rounded-2xl shadow-sm border border-gray-100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.ios-button {
+  @apply px-6 py-3 rounded-2xl font-medium transition-all duration-200 transform active:scale-95;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ios-button-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.ios-button-secondary {
+  @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+}
+
+.ios-button-success {
+  @apply bg-green-500 text-white hover:bg-green-600;
+}
+
+.ios-button-danger {
+  @apply bg-red-500 text-white hover:bg-red-600;
+}
+
+.ios-input {
+  @apply w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.ios-table {
+  @apply w-full bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100;
+}
+
+.ios-table th {
+  @apply px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-gray-50;
+}
+
+.ios-table td {
+  @apply px-6 py-4 text-sm text-gray-900 border-t border-gray-100;
+}
+
+.ios-table tr:hover {
+  @apply bg-gray-50;
+}
+
+.ios-navbar {
+  @apply bg-white/80 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-50;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.ios-sidebar {
+  @apply bg-white/80 backdrop-blur-xl border-r border-gray-200;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.ios-modal {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50;
+}
+
+.ios-modal-content {
+  @apply bg-white rounded-3xl p-6 mx-4 max-w-md w-full max-h-[90vh] overflow-y-auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .ios-card {
+    @apply rounded-xl;
+  }
+  
+  .ios-button {
+    @apply px-4 py-2.5 rounded-xl;
+  }
+  
+  .ios-input {
+    @apply px-3 py-2.5 rounded-xl;
+  }
+  
+  .ios-table {
+    @apply rounded-xl;
+  }
+  
+  .ios-modal-content {
+    @apply rounded-2xl p-4 mx-2;
   }
 }
 
-/* Estilos para inputs del formulario */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-select {
-  color: #111827 !important;
-  /* text-gray-900 */
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-input[type="text"]::placeholder,
-input[type="email"]::placeholder,
-input[type="password"]::placeholder {
-  color: #6b7280 !important;
-  /* text-gray-500 */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
 }
 
-/* Asegurar que el texto sea visible en todos los navegadores */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-text-fill-color: #111827 !important;
-  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Loading animation */
+.ios-loading {
+  @apply flex items-center justify-center;
+}
+
+.ios-spinner {
+  @apply w-6 h-6 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin;
+}
+
+/* Toast notifications */
+.ios-toast {
+  @apply fixed top-4 right-4 z-50 px-6 py-4 rounded-2xl text-white font-medium shadow-lg transform transition-all duration-300;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.ios-toast-success {
+  @apply bg-green-500;
+}
+
+.ios-toast-error {
+  @apply bg-red-500;
+}
+
+.ios-toast-warning {
+  @apply bg-yellow-500;
+}
+
+.ios-toast-info {
+  @apply bg-blue-500;
 }

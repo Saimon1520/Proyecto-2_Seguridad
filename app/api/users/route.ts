@@ -43,8 +43,10 @@ export async function GET(request: NextRequest) {
             )
         }
 
-        // Verificar si el usuario tiene permiso para ver reportes
-        const hasPermission = session.user.role?.permissions.includes('ver_reportes')
+        // Verificar si el usuario tiene permiso para ver usuarios o reportes de usuarios
+        const hasPermission = session.user.role?.permissions.some((permission: string) => 
+            permission === 'usuarios_ver' || permission === 'reportes_usuarios'
+        )
         if (!hasPermission) {
             return NextResponse.json(
                 { error: 'No tiene permisos para ver la lista de usuarios' },
@@ -113,8 +115,8 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // Verificar si el usuario tiene permiso para crear
-        const hasPermission = session.user.role?.permissions.includes('crear')
+        // Verificar si el usuario tiene permiso para crear usuarios
+        const hasPermission = session.user.role?.permissions.includes('usuarios_crear')
         if (!hasPermission) {
             return NextResponse.json(
                 { error: 'No tiene permisos para crear usuarios' },

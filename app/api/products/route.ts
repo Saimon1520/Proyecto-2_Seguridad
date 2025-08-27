@@ -31,6 +31,17 @@ export async function GET() {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
+    // Verificar si el usuario tiene permiso para ver productos o reportes de productos
+    const hasPermission = session.user.role?.permissions.some((permission: string) => 
+      permission === 'productos_ver' || permission === 'reportes_productos'
+    )
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'No tiene permisos para ver la lista de productos' },
+        { status: 403 }
+      )
+    }
+
     const products = await prisma.product.findMany({
       orderBy: {
         createdAt: 'desc'
@@ -54,6 +65,15 @@ export async function POST(request: NextRequest) {
     
     if (!session) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
+
+    // Verificar si el usuario tiene permiso para crear productos
+    const hasPermission = session.user.role?.permissions.includes('productos_crear')
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'No tiene permisos para crear productos' },
+        { status: 403 }
+      )
     }
 
     const body = await request.json()

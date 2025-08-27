@@ -27,6 +27,15 @@ export async function PUT(
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
+    // Verificar si el usuario tiene permiso para editar productos
+    const hasPermission = session.user.role?.permissions.includes('productos_editar')
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'No tiene permisos para editar productos' },
+        { status: 403 }
+      )
+    }
+
     const body = await request.json()
     
     // Validar datos de entrada
@@ -98,6 +107,15 @@ export async function DELETE(
     
     if (!session) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
+
+    // Verificar si el usuario tiene permiso para borrar productos
+    const hasPermission = session.user.role?.permissions.includes('productos_borrar')
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'No tiene permisos para borrar productos' },
+        { status: 403 }
+      )
     }
 
     // Verificar si el producto existe

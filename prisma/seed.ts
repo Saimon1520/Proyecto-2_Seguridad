@@ -6,13 +6,30 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Iniciando seed de la base de datos...')
 
-  // Crear permisos (UTN-05)
-  console.log('📝 Creando permisos...')
+  // Crear permisos específicos y organizados
+  console.log('📝 Creando permisos específicos...')
   const permissions = [
-    { name: 'crear', description: 'Permite crear registros' },
-    { name: 'editar', description: 'Permite editar registros' },
-    { name: 'borrar', description: 'Permite borrar registros' },
-    { name: 'ver_reportes', description: 'Permite acceder a las listas' }
+    // Gestión de Productos
+    { name: 'productos_crear', description: 'Crear productos' },
+    { name: 'productos_editar', description: 'Editar productos' },
+    { name: 'productos_borrar', description: 'Eliminar productos' },
+    { name: 'productos_ver', description: 'Ver lista de productos' },
+    
+    // Gestión de Usuarios
+    { name: 'usuarios_ver', description: 'Ver usuarios' },
+    { name: 'usuarios_editar', description: 'Editar usuarios' },
+    { name: 'usuarios_crear', description: 'Crear usuarios' },
+    { name: 'usuarios_borrar', description: 'Borrar usuarios' },
+    
+    // Gestión de Roles
+    { name: 'roles_ver', description: 'Ver roles' },
+    { name: 'roles_editar', description: 'Editar roles' },
+    { name: 'roles_crear', description: 'Crear roles' },
+    { name: 'roles_borrar', description: 'Borrar roles' },
+    
+    // Reportes
+    { name: 'reportes_productos', description: 'Ver lista de productos' },
+    { name: 'reportes_usuarios', description: 'Ver lista de usuarios' }
   ]
 
   for (const permData of permissions) {
@@ -64,31 +81,37 @@ async function main() {
 
   // Auditor: solo ver reportes
   const auditorRole = await prisma.role.findUnique({ where: { name: 'Auditor' } })
-  const verReportesPermission = await prisma.permission.findUnique({ where: { name: 'ver_reportes' } })
-
-  await prisma.rolePermission.upsert({
+  const reportPermissions = await prisma.permission.findMany({
     where: {
-      roleId_permissionId: {
+      name: { in: ['reportes_productos', 'reportes_usuarios'] }
+    }
+  })
+
+  for (const permission of reportPermissions) {
+    await prisma.rolePermission.upsert({
+      where: {
+        roleId_permissionId: {
+          roleId: auditorRole!.id,
+          permissionId: permission.id
+        }
+      },
+      update: {},
+      create: {
         roleId: auditorRole!.id,
-        permissionId: verReportesPermission!.id
+        permissionId: permission.id
       }
-    },
-    update: {},
-    create: {
-      roleId: auditorRole!.id,
-      permissionId: verReportesPermission!.id
-    }
-  })
+    })
+  }
 
-  // Registrador: crear, editar, borrar productos y ver reportes
+  // Registrador: gestión de productos y ver usuarios
   const registradorRole = await prisma.role.findUnique({ where: { name: 'Registrador' } })
-  const productPermissions = await prisma.permission.findMany({
+  const registradorPermissions = await prisma.permission.findMany({
     where: {
-      name: { in: ['crear', 'editar', 'borrar', 'ver_reportes'] }
+      name: { in: ['productos_crear', 'productos_editar', 'productos_borrar', 'reportes_usuarios'] }
     }
   })
 
-  for (const permission of productPermissions) {
+  for (const permission of registradorPermissions) {
     await prisma.rolePermission.upsert({
       where: {
         roleId_permissionId: {

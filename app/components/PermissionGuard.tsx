@@ -49,7 +49,7 @@ export default function PermissionGuard({
 // Componentes específicos para permisos comunes
 export function CreatePermissionGuard({ children, fallback }: { children: ReactNode, fallback?: ReactNode }) {
   return (
-    <PermissionGuard requiredPermissions={['crear']} fallback={fallback}>
+    <PermissionGuard requiredPermissions={['productos_crear', 'usuarios_crear']} fallback={fallback}>
       {children}
     </PermissionGuard>
   )
@@ -57,7 +57,7 @@ export function CreatePermissionGuard({ children, fallback }: { children: ReactN
 
 export function EditPermissionGuard({ children, fallback }: { children: ReactNode, fallback?: ReactNode }) {
   return (
-    <PermissionGuard requiredPermissions={['editar']} fallback={fallback}>
+    <PermissionGuard requiredPermissions={['productos_editar', 'usuarios_editar']} fallback={fallback}>
       {children}
     </PermissionGuard>
   )
@@ -65,7 +65,7 @@ export function EditPermissionGuard({ children, fallback }: { children: ReactNod
 
 export function DeletePermissionGuard({ children, fallback }: { children: ReactNode, fallback?: ReactNode }) {
   return (
-    <PermissionGuard requiredPermissions={['borrar']} fallback={fallback}>
+    <PermissionGuard requiredPermissions={['productos_borrar', 'usuarios_borrar']} fallback={fallback}>
       {children}
     </PermissionGuard>
   )
@@ -73,7 +73,7 @@ export function DeletePermissionGuard({ children, fallback }: { children: ReactN
 
 export function ViewReportsPermissionGuard({ children, fallback }: { children: ReactNode, fallback?: ReactNode }) {
   return (
-    <PermissionGuard requiredPermissions={['ver_reportes']} fallback={fallback}>
+    <PermissionGuard requiredPermissions={['reportes_productos', 'reportes_usuarios']} fallback={fallback}>
       {children}
     </PermissionGuard>
   )

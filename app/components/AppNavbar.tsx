@@ -25,6 +25,9 @@ export default function AppNavbar() {
 						<Link href="/users" className="hidden sm:inline-flex bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium">
 							Gestión de Usuarios
 						</Link>
+						<Link href="/roles" className="hidden sm:inline-flex bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+							Gestión de Roles y Permisos
+						</Link>
 						<Link href="/products" className="hidden sm:inline-flex bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
 							Gestión de Productos
 						</Link>

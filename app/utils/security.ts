@@ -84,8 +84,8 @@ export function validateName(name: string): string | null {
   
   const sanitizedName = sanitizeText(name.trim())
   
-  // Solo permitir letras, espacios y algunos caracteres especiales
-  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/.test(sanitizedName)) {
+  // Solo permitir letras, espacios y algunos caracteres especiales, máximo 100 caracteres
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,100}$/.test(sanitizedName)) {
     return null
   }
   
@@ -104,8 +104,9 @@ export function validateProductCode(code: string): string | null {
   
   const sanitizedCode = sanitizeText(code.trim().toUpperCase())
   
-  // Solo permitir letras y números, máximo 10 caracteres
-  if (!/^[A-Z0-9]{3,10}$/.test(sanitizedCode)) {
+  // Validar formato: debe empezar con letra, seguido de números
+  // Ejemplo: P001, PROD123, A999
+  if (!/^[A-Z][A-Z0-9]{2,9}$/.test(sanitizedCode)) {
     return null
   }
   
@@ -119,7 +120,7 @@ export function validateProductCode(code: string): string | null {
  */
 export function validatePrice(price: string | number): number | null {
   if (typeof price === 'number') {
-    return price >= 0 && price <= 999999.99 ? price : null
+    return price >= 0 && price <= 9999.99 ? price : null
   }
   
   if (typeof price !== 'string') {
@@ -129,7 +130,7 @@ export function validatePrice(price: string | number): number | null {
   const sanitizedPrice = sanitizeText(price.trim())
   const numericPrice = parseFloat(sanitizedPrice)
   
-  if (isNaN(numericPrice) || numericPrice < 0 || numericPrice > 999999.99) {
+  if (isNaN(numericPrice) || numericPrice < 0 || numericPrice > 9999.99) {
     return null
   }
   
@@ -143,7 +144,7 @@ export function validatePrice(price: string | number): number | null {
  */
 export function validateQuantity(quantity: string | number): number | null {
   if (typeof quantity === 'number') {
-    return Number.isInteger(quantity) && quantity >= 0 && quantity <= 999999 ? quantity : null
+    return Number.isInteger(quantity) && quantity >= 0 && quantity <= 2147483647 ? quantity : null
   }
   
   if (typeof quantity !== 'string') {
@@ -153,7 +154,7 @@ export function validateQuantity(quantity: string | number): number | null {
   const sanitizedQuantity = sanitizeText(quantity.trim())
   const numericQuantity = parseInt(sanitizedQuantity, 10)
   
-  if (isNaN(numericQuantity) || !Number.isInteger(numericQuantity) || numericQuantity < 0 || numericQuantity > 999999) {
+  if (isNaN(numericQuantity) || !Number.isInteger(numericQuantity) || numericQuantity < 0 || numericQuantity > 2147483647) {
     return null
   }
   

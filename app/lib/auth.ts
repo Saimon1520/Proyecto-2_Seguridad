@@ -51,16 +51,19 @@ export const authOptions = {
 
           if (!isPasswordValid) {
             // Incrementar intentos de login fallidos
+            const maxAttempts = parseInt(process.env.MAX_LOGIN_ATTEMPTS || '5')
+            const lockoutDuration = parseInt(process.env.LOCKOUT_DURATION || '15') * 60 * 1000 // Convertir a milisegundos
+            
             await prisma.user.update({
               where: { id: user.id },
               data: {
                 loginAttempts: user.loginAttempts + 1,
-                lockedUntil: user.loginAttempts >= 4 ? new Date(Date.now() + 15 * 60 * 1000) : null // Bloquear por 15 minutos después de 5 intentos
+                lockedUntil: user.loginAttempts >= (maxAttempts - 1) ? new Date(Date.now() + lockoutDuration) : null
               }
             })
 
-            if (user.loginAttempts >= 4) {
-              throw new Error('Demasiados intentos fallidos. Cuenta bloqueada por 15 minutos.')
+            if (user.loginAttempts >= (maxAttempts - 1)) {
+              throw new Error(`Demasiados intentos fallidos. Cuenta bloqueada por ${process.env.LOCKOUT_DURATION || '15'} minutos.`)
             }
 
             throw new Error('Contraseña incorrecta')
@@ -97,7 +100,12 @@ export const authOptions = {
   ],
   session: {
     strategy: 'jwt' as const,
-    maxAge: 60 * 60 * 24, // 24 horas para desarrollo
+    // NO usar tiempo fijo - solo inactividad
+    // maxAge: parseInt(process.env.SESSION_EXPIRY || '60'), // Comentado
+  },
+  jwt: {
+    // NO usar tiempo fijo - solo inactividad
+    // maxAge: parseInt(process.env.SESSION_EXPIRY || '60'), // Comentado
   },
   callbacks: {
     async jwt({ token, user }: any) {
@@ -108,6 +116,8 @@ export const authOptions = {
         token.username = user.username
         token.role = user.role
         token.iat = Math.floor(Date.now() / 1000) // Timestamp de emisión
+        // NO forzar expiración - solo inactividad
+        // token.exp = Math.floor(Date.now() / 1000) + parseInt(process.env.SESSION_EXPIRY || '60')
       }
       return token
     },
@@ -118,6 +128,8 @@ export const authOptions = {
         session.user.name = token.name as string
         session.user.username = token.username as string
         session.user.role = token.role as any
+        // NO mostrar expiración - solo inactividad
+        // session.expires = new Date(token.exp * 1000).toISOString()
       }
       return session
     }

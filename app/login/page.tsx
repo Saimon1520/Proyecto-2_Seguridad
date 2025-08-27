@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signIn, getSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -20,6 +20,7 @@ export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const errorParam = searchParams.get('error')
+  const reasonParam = searchParams.get('reason')
 
   const {
     register,
@@ -28,6 +29,49 @@ export default function LoginPage() {
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema)
   })
+
+  // Mostrar mensaje especial si se cerró por inactividad
+  const getInactivityMessage = () => {
+    if (reasonParam === 'inactivity') {
+      return (
+        <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-md mb-4">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 mr-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm font-medium">
+              Tu sesión se cerró por inactividad. Por favor, inicia sesión nuevamente.
+            </span>
+          </div>
+        </div>
+      )
+    }
+    return null
+  }
+
+  // Función para obtener mensaje de error limpio
+  const getErrorMessage = () => {
+    if (error) return error
+    if (errorParam) {
+      // Limpiar mensajes de error de la URL
+      const cleanError = errorParam
+        .replace(/\+/g, ' ')
+        .replace(/%20/g, ' ')
+        .replace(/Debe\+iniciar\+sesión\+para\+acceder\+a\+esta\+página/g, 'Debe iniciar sesión para acceder a esta página')
+      return cleanError
+    }
+    return ''
+  }
+
+  // Limpiar error de la URL después de mostrarlo
+  useEffect(() => {
+    if (errorParam && !error) {
+      // Limpiar el parámetro de error de la URL sin recargar la página
+      const newUrl = new URL(window.location.href)
+      newUrl.searchParams.delete('error')
+      window.history.replaceState({}, '', newUrl.toString())
+    }
+  }, [errorParam, error])
 
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true)
@@ -112,12 +156,14 @@ export default function LoginPage() {
                     Error de autenticación
                   </h3>
                   <div className="mt-2 text-sm text-red-700">
-                    <p>{error || errorParam}</p>
+                    <p>{getErrorMessage()}</p>
                   </div>
                 </div>
               </div>
             </div>
           )}
+
+          {getInactivityMessage()}
 
           <div>
             <button

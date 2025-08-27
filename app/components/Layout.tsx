@@ -5,12 +5,19 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Sidebar from './Sidebar'
 import Header from './Header'
+import { useInactivityTimeout } from '../hooks/useInactivityTimeout'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router = useRouter()
   const pathname = usePathname()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+
+  // Configurar timeout por inactividad (1 minuto)
+  useInactivityTimeout({
+    timeoutMinutes: 1, // 1 minuto de inactividad
+    warningMinutes: 0.5 // Advertencia a los 30 segundos (opcional)
+  })
 
   // Rutas públicas que no requieren autenticación
   const publicRoutes = ['/login', '/register']
@@ -19,7 +26,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Solo redirigir si no es una ruta pública y no hay sesión
     if (!isPublicRoute && status === 'unauthenticated') {
-      router.push('/login')
+      // Redirigir de forma limpia sin parámetros de error
+      router.replace('/login')
     }
   }, [status, router, isPublicRoute, pathname])
 
@@ -64,6 +72,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+      
+      {/* Notificación de expiración de sesión - OCULTA */}
+      {/* <SessionExpiryNotification /> */}
     </div>
   )
 }

@@ -43,6 +43,10 @@ export default function ProductsPage() {
     price: 0
   })
 
+  // Estados para errores de validación
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   useEffect(() => {
     if (status === 'loading') return
     
@@ -68,8 +72,51 @@ export default function ProductsPage() {
     }
   }
 
+  // Función para validar el formulario
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {}
+    
+    // Validar código del producto
+    if (!formData.code.trim()) {
+      errors.code = 'El código del producto es obligatorio'
+    } else if (!/^[A-Z][A-Z0-9]{2,9}$/.test(formData.code.trim().toUpperCase())) {
+      errors.code = 'El código debe empezar con una letra mayúscula, seguido de 2-9 caracteres (letras o números). Ejemplo: P001, PROD123'
+    }
+    
+    // Validar nombre
+    if (!formData.name.trim()) {
+      errors.name = 'El nombre del producto es obligatorio'
+    } else if (formData.name.trim().length > 100) {
+      errors.name = 'El nombre del producto no puede tener más de 100 caracteres'
+    }
+    
+    // Validar cantidad
+    if (formData.quantity < 0) {
+      errors.quantity = 'La cantidad no puede ser negativa'
+    } else if (formData.quantity > 2147483647) {
+      errors.quantity = 'La cantidad máxima permitida es 2,147,483,647'
+    }
+    
+    // Validar precio
+    if (formData.price < 0) {
+      errors.price = 'El precio no puede ser negativo'
+    } else if (formData.price > 9999.99) {
+      errors.price = 'El precio máximo permitido es $9,999.99'
+    }
+    
+    setFormErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validar formulario antes de enviar
+    if (!validateForm()) {
+      return
+    }
+    
+    setIsSubmitting(true)
     
     try {
       const url = editingProduct ? `/api/products/${editingProduct.id}` : '/api/products'
@@ -87,6 +134,7 @@ export default function ProductsPage() {
         setShowCreateForm(false)
         setEditingProduct(null)
         setFormData({ code: '', name: '', description: '', quantity: 0, price: 0 })
+        setFormErrors({})
         setMessage({ type: 'success', text: editingProduct ? 'Producto actualizado exitosamente' : 'Producto creado exitosamente' })
         fetchProducts()
         setTimeout(() => setMessage(null), 3000)
@@ -99,6 +147,8 @@ export default function ProductsPage() {
       console.error('Error saving product:', error)
       setMessage({ type: 'error', text: 'Error al guardar el producto' })
       setTimeout(() => setMessage(null), 5000)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -230,11 +280,27 @@ export default function ProductsPage() {
                 <input
                   type="text"
                   value={formData.code}
-                  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  onChange={(e) => {
+                    const value = e.target.value.toUpperCase()
+                    setFormData({ ...formData, code: value })
+                    // Limpiar error si se corrige
+                    if (formErrors.code && /^[A-Z][A-Z0-9]{2,9}$/.test(value)) {
+                      setFormErrors({ ...formErrors, code: '' })
+                    }
+                  }}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    formErrors.code ? 'border-red-300' : 'border-gray-300'
+                  }`}
                   required
-                  placeholder="Ej: PROD001"
+                  placeholder="Ej: P001, PROD123"
+                  maxLength={10}
                 />
+                {formErrors.code && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.code}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Formato: Letra mayúscula + 2-9 caracteres (letras o números)
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -243,11 +309,27 @@ export default function ProductsPage() {
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  onChange={(e) => {
+                    const value = e.target.value
+                    setFormData({ ...formData, name: value })
+                    // Limpiar error si se corrige
+                    if (formErrors.name && value.trim().length <= 100) {
+                      setFormErrors({ ...formErrors, name: '' })
+                    }
+                  }}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    formErrors.name ? 'border-red-300' : 'border-gray-300'
+                  }`}
                   required
                   placeholder="Nombre del producto"
+                  maxLength={100}
                 />
+                {formErrors.name && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.name}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Máximo 100 caracteres ({formData.name.length}/100)
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -256,11 +338,27 @@ export default function ProductsPage() {
                 <input
                   type="number"
                   value={formData.quantity}
-                  onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) || 0 })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value) || 0
+                    setFormData({ ...formData, quantity: value })
+                    // Limpiar error si se corrige
+                    if (formErrors.quantity && value >= 0 && value <= 2147483647) {
+                      setFormErrors({ ...formErrors, quantity: '' })
+                    }
+                  }}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    formErrors.quantity ? 'border-red-300' : 'border-gray-300'
+                  }`}
                   required
                   min="0"
+                  max="2147483647"
                 />
+                {formErrors.quantity && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.quantity}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Cantidad máxima: 2,147,483,647
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -269,12 +367,28 @@ export default function ProductsPage() {
                 <input
                   type="number"
                   value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value) || 0
+                    setFormData({ ...formData, price: value })
+                    // Limpiar error si se corrige
+                    if (formErrors.price && value >= 0 && value <= 9999.99) {
+                      setFormErrors({ ...formErrors, price: '' })
+                    }
+                  }}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    formErrors.price ? 'border-red-300' : 'border-gray-300'
+                  }`}
                   required
                   min="0"
+                  max="9999.99"
                   step="0.01"
                 />
+                {formErrors.price && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.price}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Precio máximo: $9,999.99
+                </p>
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -293,8 +407,9 @@ export default function ProductsPage() {
               <button
                 type="submit"
                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                disabled={isSubmitting}
               >
-                {editingProduct ? 'Actualizar' : 'Crear'}
+                {isSubmitting ? 'Guardando...' : editingProduct ? 'Actualizar' : 'Crear'}
               </button>
               <button
                 type="button"

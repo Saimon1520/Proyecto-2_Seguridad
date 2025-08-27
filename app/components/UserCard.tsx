@@ -29,7 +29,7 @@ interface User {
 interface UserCardProps {
   user: User
   onEdit: (user: User) => void
-  onDelete: (userId: string) => void
+  onDelete: (user: User) => void
   canEdit: boolean
   canDelete: boolean
 }
@@ -117,7 +117,7 @@ export default function UserCard({ user, onEdit, onDelete, canEdit, canDelete }:
           )}
           {canDelete && (
             <button
-              onClick={() => onDelete(user.id)}
+              onClick={() => onDelete(user)}
               className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
               title="Eliminar usuario"
             >

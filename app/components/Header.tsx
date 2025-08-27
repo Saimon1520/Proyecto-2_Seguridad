@@ -4,7 +4,6 @@ import { useSession, signOut } from 'next-auth/react'
 import { useState } from 'react'
 import { 
   Bars3Icon,
-  BellIcon,
   ChevronDownIcon
 } from '@heroicons/react/24/outline'
 
@@ -24,7 +23,7 @@ export default function Header({ sidebarCollapsed, onToggleSidebar }: HeaderProp
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
       <div className="flex items-center justify-between">
-        {/* Lado izquierdo - Toggle del sidebar y breadcrumb */}
+        {/* Lado izquierdo - Solo toggle del sidebar */}
         <div className="flex items-center space-x-4">
           {/* Botón para toggle del sidebar */}
           <button
@@ -34,27 +33,10 @@ export default function Header({ sidebarCollapsed, onToggleSidebar }: HeaderProp
           >
             <Bars3Icon className="w-5 h-5 text-gray-600" />
           </button>
-
-          {/* Breadcrumb */}
-          <nav className="hidden sm:flex items-center space-x-2 text-sm text-gray-500">
-            <span>Dashboard</span>
-            <span>/</span>
-            <span className="text-gray-900 font-medium">Sistema</span>
-          </nav>
         </div>
 
-        {/* Lado derecho - Notificaciones y usuario */}
+        {/* Lado derecho - Usuario */}
         <div className="flex items-center space-x-4">
-          {/* Botón de notificaciones */}
-          <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
-            <BellIcon className="w-5 h-5 text-gray-600" />
-            {/* Indicador de notificaciones */}
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
-
-          {/* Separador vertical */}
-          <div className="w-px h-6 bg-gray-300"></div>
-
           {/* Menú del usuario */}
           <div className="relative">
             <button

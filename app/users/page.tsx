@@ -51,6 +51,10 @@ export default function UsersPage() {
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [userToDelete, setUserToDelete] = useState<User | null>(null)
     const [isDeleting, setIsDeleting] = useState(false)
+    
+    // Estados para mensajes de confirmación
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+    const [successMessage, setSuccessMessage] = useState('')
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -128,6 +132,19 @@ export default function UsersPage() {
                 resetForm()
                 fetchUsers()
                 setError('')
+                
+                // Mostrar mensaje de éxito específico
+                if (editingUser) {
+                    setSuccessMessage('Usuario actualizado exitosamente.')
+                } else {
+                    setSuccessMessage('Usuario creado exitosamente.')
+                }
+                setShowSuccessMessage(true)
+                
+                // Ocultar mensaje después de 5 segundos
+                setTimeout(() => {
+                    setShowSuccessMessage(false)
+                }, 5000)
             } else {
                 const errorData = await response.json()
                 setError(errorData.error || 'Error al procesar la solicitud')
@@ -170,6 +187,15 @@ export default function UsersPage() {
                 setError('')
                 setShowDeleteModal(false)
                 setUserToDelete(null)
+                
+                // Mostrar mensaje de éxito
+                setSuccessMessage('Usuario eliminado exitosamente.')
+                setShowSuccessMessage(true)
+                
+                // Ocultar mensaje después de 5 segundos
+                setTimeout(() => {
+                    setShowSuccessMessage(false)
+                }, 5000)
             } else {
                 const errorData = await response.json()
                 setError(errorData.error || 'Error al eliminar usuario')
@@ -212,6 +238,18 @@ export default function UsersPage() {
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                         </svg>
                         {error}
+                    </div>
+                </div>
+            )}
+
+            {/* Mensaje de éxito */}
+            {showSuccessMessage && (
+                <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-md">
+                    <div className="flex items-center">
+                        <svg className="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        {successMessage}
                     </div>
                 </div>
             )}
@@ -368,20 +406,22 @@ export default function UsersPage() {
             </div>
 
             {/* Modal de confirmación para eliminar usuario */}
-            <ConfirmationModal
-                isOpen={showDeleteModal}
-                onClose={() => {
-                    setShowDeleteModal(false)
-                    setUserToDelete(null)
-                }}
-                onConfirm={confirmDelete}
-                title="Confirmar eliminación"
-                message={`¿Está seguro de que desea eliminar al usuario "${userToDelete?.name}"? Esta acción no se puede deshacer.`}
-                type="warning"
-                confirmText="Eliminar Usuario"
-                cancelText="Cancelar"
-                isLoading={isDeleting}
-            />
+            {userToDelete && (
+                <ConfirmationModal
+                    isOpen={showDeleteModal}
+                    onClose={() => {
+                        setShowDeleteModal(false)
+                        setUserToDelete(null)
+                    }}
+                    onConfirm={confirmDelete}
+                    title="Confirmar eliminación"
+                    message={`¿Está seguro de que desea eliminar al usuario "${userToDelete.name}"? Esta acción no se puede deshacer.`}
+                    type="warning"
+                    confirmText="Eliminar Usuario"
+                    cancelText="Cancelar"
+                    isLoading={isDeleting}
+                />
+            )}
         </div>
     )
 }

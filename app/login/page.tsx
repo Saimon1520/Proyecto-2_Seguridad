@@ -175,6 +175,8 @@ export default function LoginPage() {
             </button>
           </div>
 
+          {/* ENLACE DE REGISTRO COMENTADO POR SEGURIDAD - Solo admin puede crear usuarios */}
+          {/* 
           <div className="text-center">
             <p className="text-sm text-gray-600">
               ¿No tienes cuenta?
@@ -186,6 +188,19 @@ export default function LoginPage() {
               Regístrate aquí
             </a>
           </div>
+          */}
+          
+          {/* Mensaje de seguridad comentado */}
+          {/*
+          <div className="text-center">
+            <p className="text-sm text-gray-500">
+              El registro de usuarios está restringido por seguridad
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              Contacta al administrador para crear una cuenta
+            </p>
+          </div>
+          */}
         </form>
       </div>
     </div>

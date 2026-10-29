@@ -22,7 +22,7 @@ services:
       - "3001:3000"
     environment:
       DATABASE_URL: postgresql://postgres:password123@postgres:5432/login_secure
-      NEXTAUTH_SECRET: 0a141fbc554c986a1622627977e1d423e5680fe51dd60f6c855f38c02c1b3cd56b65c4702a379762fb9313e166a32fdca0079a52d5ba77d9840912003f0e691f
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?Define NEXTAUTH_SECRET en .env (openssl rand -base64 32)}
       NEXTAUTH_URL: http://localhost:3001
       NODE_ENV: development
     depends_on:

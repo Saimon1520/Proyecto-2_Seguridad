@@ -37,6 +37,12 @@ NEXTAUTH_SECRET="tu-secreto-super-seguro-aqui"
 NEXTAUTH_URL="http://localhost:3000"
 ```
 
+Genera un secreto propio para `NEXTAUTH_SECRET` (nunca lo subas al repositorio):
+
+```bash
+openssl rand -base64 32
+```
+
 ### 3. Ejecutar con Docker
 ```bash
 # Construir y ejecutar los contenedores

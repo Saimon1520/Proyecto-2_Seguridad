@@ -20,7 +20,7 @@
     "jsonwebtoken": "^9.0.2",
     "next": "^15.5.28",
     "next-auth": "^4.24.15",
-    "postcss": "^8.4.32",
+    "postcss": "^8.5.32",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-hook-form": "^7.48.2",
@@ -38,5 +38,8 @@
     "prisma": "^5.7.1",
     "tsx": "^4.6.2",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "$postcss"
   }
 }
